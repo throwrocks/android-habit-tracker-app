@@ -14,6 +14,7 @@ class HabitsContract {
         // The internal id is used by all tables
         public static final String HABITS_TABLE_NAME = "habits";
         //The habits table fields
+        public static final String habitId = "rowid";
         public static final String habitName = "name";
         public static final String habitCount = "count";
         public static final String habitDateAdded = "date_added";

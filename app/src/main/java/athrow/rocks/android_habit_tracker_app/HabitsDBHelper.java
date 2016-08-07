@@ -2,6 +2,7 @@ package athrow.rocks.android_habit_tracker_app;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -10,10 +11,7 @@ import android.util.Log;
  * Created by jose on 8/6/16.
  */
 class HabitsDBHelper extends SQLiteOpenHelper {
-
-    // The database version
-    private static final int DATABASE_VERSION = 3;
-
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "habits.db";
     private SQLiteDatabase db;
 
@@ -43,6 +41,11 @@ class HabitsDBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    /**
+     * insertRecord
+     *
+     * @param contentValues the ContentValues with the data to create the record
+     */
     public void insertRecord(ContentValues contentValues) {
         db = getWritableDatabase();
         try {
@@ -50,18 +53,69 @@ class HabitsDBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        db.close();
     }
 
-    public void deleteRecord(int recordId) {
-
+    /**
+     * updateRecord
+     *
+     * @param recordId      the id of the record to be updated
+     * @param contentValues the ContentValues with the new data
+     */
+    public void updateRecord(int recordId, ContentValues contentValues) {
+        db = getWritableDatabase();
         try {
-            db.delete(
+            db.update(
                     HabitsContract.HabitsEntry.HABITS_TABLE_NAME,
-                    HabitsContract.HabitsEntry._ID + "=" + recordId,
+                    contentValues,
+                    HabitsContract.HabitsEntry.habitId + "=" + recordId,
                     null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        db.close();
     }
 
+    /**
+     * deleteRecord
+     *
+     * @param recordId the id of the record to be deleted
+     */
+    public void deleteRecord(int recordId) {
+        db = getWritableDatabase();
+        try {
+            db.delete(
+                    HabitsContract.HabitsEntry.HABITS_TABLE_NAME,
+                    HabitsContract.HabitsEntry.habitId + "=" + recordId,
+                    null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        db.close();
+    }
+
+    /**
+     * getRecord
+     *
+     * @param recordId the id of the record to get
+     * @return a Cursor object with the record values
+     */
+    public Cursor getRecord(int recordId) {
+        Cursor record;
+        String table = HabitsContract.HabitsEntry.HABITS_TABLE_NAME;
+        String selection = HabitsContract.HabitsEntry.habitId + " = ? ";
+        String[] selectionArgs = new String[]{Integer.toString(recordId)};
+        db = getReadableDatabase();
+        try {
+            record = db.query(true, table, null, selection, selectionArgs, null, null, null, null);
+            record.moveToFirst();
+            record.close();
+            db.close();
+            return record;
+        } catch (Exception e) {
+            e.printStackTrace();
+            db.close();
+            return null;
+        }
+    }
 }
