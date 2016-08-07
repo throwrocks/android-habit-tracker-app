@@ -33,5 +33,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("getRecord ", habitRecord.toString());
         // Delete the record
         habitsDBHelper.deleteRecord(1);
+        // Delete the database
+        habitsDBHelper.dropDatabase(this);
     }
 }

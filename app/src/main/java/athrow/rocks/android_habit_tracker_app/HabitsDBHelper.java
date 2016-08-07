@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
+
 /**
  * Created by jose on 8/6/16.
  */
@@ -24,7 +26,7 @@ class HabitsDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i("onCreate", "true");
         final String SQL_CREATE_HABITS_TABLE =
-                "CREATE TABLE " +
+                "CREATE TABLE IF NOT EXISTS " +
                         HabitsContract.HabitsEntry.HABITS_TABLE_NAME + " (" +
                         HabitsContract.HabitsEntry.habitName + " TEXT NOT NULL, " +
                         HabitsContract.HabitsEntry.habitCount + " INTEGER NOT NULL, " +
@@ -116,6 +118,20 @@ class HabitsDBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             db.close();
             return null;
+        }
+    }
+
+    /**
+     * dropDatabase
+     * Deletes the habits database
+     *
+     * @param context activity context
+     */
+    public void dropDatabase(Context context) {
+        try {
+            context.deleteDatabase(DATABASE_NAME);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
